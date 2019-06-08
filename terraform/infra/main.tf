@@ -17,9 +17,6 @@ resource "google_compute_instance" "controller" {
     }
   }
 
-  // Local SSD disk
-  scratch_disk {
-  }
 
   network_interface {
     subnetwork = "${google_compute_subnetwork.mysubnet.name}"
@@ -54,10 +51,6 @@ resource "google_compute_instance" "worker" {
     initialize_params {
       image = "ubuntu-os-cloud/ubuntu-1804-lts"
     }
-  }
-
-  // Local SSD disk
-  scratch_disk {
   }
 
   network_interface {
