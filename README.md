@@ -54,3 +54,26 @@ docker run --entrypoint htpasswd registry -Bbn user 123 > /opt/docker/containers
 
 7. Get into istio directory and follow following steps:
 
+  a. make sure helm is installed
+
+
+  b.download istio release
+curl -L https://git.io/getLatestIstio | ISTIO_VERSION=1.1.3 sh -
+
+  c. create istio-system namespace
+kubectl create namespace istio-system
+
+  d. use help to deploy istio components
+helm template install/kubernetes/helm/istio-init --name istio-init --namespace istio-system | kubectl apply -f -
+
+  e. verify istio version
+kubectl get deployment istio-pilot -o yaml -n istio-system | grep image: | cut -d ':' -f3 | head -1
+
+  f. create ingress-gateway cert for TLS termination at istio-ingressgateway
+kubectl create -n istio-system secret tls istio-ingressgateway-certs --key tls.key --cert tls.cert
+
+  g. label the target namespace for auto sidecar injection
+  h. kubectl label namespace test-app istio-injection=enabled
+  i. Add gateway config
+  j. Add Virtual service:
+  k. Add service entry for external URL/endpoints whitelisting
