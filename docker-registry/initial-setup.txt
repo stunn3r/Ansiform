@@ -1,0 +1,19 @@
+docker run -d \
+  -p 5000:5000 \
+  --restart=always \
+  --name registry \
+  -v /opt/docker/containers/docker-registry/registry:/var/lib/registry \
+  -v /opt/docker/containers/docker-registry/auth:/auth \
+  -e "REGISTRY_AUTH=htpasswd" \
+  -e "REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm" \
+  -e REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd \
+  registry:2
+
+
+docker run --entrypoint htpasswd registry -Bbn user 123 > /opt/docker/containers/docker-registry/auth/htpasswd
+
+
+#Add following entry to systemd file
+
+/etc/docker/daemon.json
+{ "insecure-registries":["myregistry.example.com:5000"] }
