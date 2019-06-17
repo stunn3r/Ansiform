@@ -1,0 +1,35 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: jenkins
+  name: jenkins
+  namespace: jenkins
+spec:
+  replicas: 1
+    spec:
+      containers:
+      - env:
+        - name: JAVA_OPTS
+          value: -Djenkins.install.runSetupWizard=false
+        image: stunn3r/jenkins:master
+        imagePullPolicy: IfNotPresent
+        name: jenkins
+        ports:
+        - containerPort: 8080
+          name: http-port
+          protocol: TCP
+        - containerPort: 50000
+          name: jnlp-port
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /var/jenkins_home
+          name: jenkins-home
+      dnsPolicy: ClusterFirst
+      nodeSelector:
+        jenkins: master
+      volumes:
+      - hostPath:
+          path: /home/ubuntu
+          type: DirectoryOrCreate
+        name: jenkins-home
