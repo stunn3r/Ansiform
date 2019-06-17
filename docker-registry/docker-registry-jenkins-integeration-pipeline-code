@@ -1,0 +1,52 @@
+@Library('mediawiki@master') _
+
+pipeline {
+  agent {
+    kubernetes {
+      label 'mypod'
+      defaultContainer 'jnlp'
+      yaml """
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    some-label: some-label-value
+spec:
+  containers:
+  - name: maven
+    image: docker
+    command:
+    - cat
+    tty: true
+    volumeMounts:
+    - name: jenkins-home
+      mountPath: /var/run/docker.sock
+  volumes:
+    - name: jenkins-home
+      hostPath:
+        path: /var/run/docker.sock
+        type: File
+"""
+    }
+  }
+  stages {
+    stage('Run maven') {
+      steps {
+        script {
+            container('maven') {
+                def dockerfile = libraryResource "org/mediawiki/Dockerfile"
+
+                docker.withRegistry("https://docker-registry.com:5000", "11487029-f094-4dd8-a42a-f8e38f0214a8") {
+                    writeFile file: "Dockerfile", text: dockerfile
+                    dObject = docker.build("mediawiki", '.')
+                    sh """
+
+                    """
+                    dObject.push("latest")
+                }
+            }
+        }
+      }
+    }
+  }
+}
