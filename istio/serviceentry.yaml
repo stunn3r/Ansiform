@@ -1,0 +1,20 @@
+# Add service entry for external URL/endpoints whitelisting
+
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: origin-ext
+  namespace: mui-relqa
+spec:
+  hosts:
+  - backend-db-load-balancer.example.com
+  location: MESH_EXTERNAL
+  ports:
+  - name: http
+    number: 80
+    protocol: HTTP
+  - name: https
+    number: 443
+    protocol: HTTPS
+  resolution: DNS
+

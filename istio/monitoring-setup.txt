@@ -1,0 +1,11 @@
+#make sure prometheus is running and add kiali
+
+helm template install/kubernetes/helm/istio --name kiali --namespace istio-system \
+ -x charts/kiali/templates/deployment.yaml -x charts/kiali/templates/service.yaml \
+    -x charts/kiali/templates/serviceaccount.yaml -x charts/kiali/templates/configmap.yaml \
+    -x charts/kiali/templates/clusterrole.yaml -x charts/kiali/templates/clusterrolebinding.yaml \
+    -x charts/kiali/templates/service.yaml \
+    --set global.istioNamespace=istio-system --set kiali.enabled=true \
+    --set "kiali.dashboard.jaegerURL=http://jaeger-query:16686" \
+    --set "kiali.dashboard.grafanaURL=http://grafana:3000" | kubectl apply -f -
+

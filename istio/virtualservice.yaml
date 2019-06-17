@@ -1,0 +1,32 @@
+# Add Virtual service:
+
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: routes
+  namespace: ui-app
+spec:
+  gateways:
+  - my-gateway
+  hosts:
+  - host.example.com
+  - alias1.example.com
+  http:
+  - match:
+    - uri:
+        prefix: /api/content
+    rewrite:
+      uri: /
+    route:
+    - destination:
+        host: backend.backend-dev.svc.cluster.local
+        port:
+          number: 80
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: ui.ui-app.svc.cluster.local
+        port:
+          number: 80
