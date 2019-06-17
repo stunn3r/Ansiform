@@ -1,0 +1,27 @@
+#make sure helm is installed
+
+
+#download istio release
+curl -L https://git.io/getLatestIstio | ISTIO_VERSION=1.1.3 sh -
+
+#create istio-system namespace
+kubectl create namespace istio-system
+
+#use help to deploy istio components
+helm template install/kubernetes/helm/istio-init --name istio-init --namespace istio-system | kubectl apply -f -
+
+#verify istio version
+kubectl get deployment istio-pilot -o yaml -n istio-system | grep image: | cut -d ':' -f3 | head -1
+
+#create ingress-gateway cert for TLS termination at istio-ingressgateway
+kubectl create -n istio-system secret tls istio-ingressgateway-certs --key tls.key --cert tls.cert
+
+# label the target namespace for auto sidecar injection
+kubectl label namespace test-app istio-injection=enabled
+
+# Add gateway config
+
+# Add Virtual service:
+
+# Add service entry for external URL/endpoints whitelisting
+
