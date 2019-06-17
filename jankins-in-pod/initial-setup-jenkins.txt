@@ -1,0 +1,9 @@
+1. Create Service account named "Jenkins"
+
+2. Create clusterRoleBinding to give acceess
+
+kubectl create clusterrolebinding permissive-binding --clusterrole=cluster-admin --user=admin --user=kubelet --group=system:serviceaccounts:jenkins --namespace=jenkins
+
+3. get the token to make jenkin connect to
+
+kubectl get -n <your-namespace> sa/jenkins --template='{{range .secrets}}{{ .name }} {{end}}' | xargs -n 1 kubectl -n <your-namespace> get secret --template='{{ if .data.token }}{{ .data.token }}{{end}}' | head -n 1 | base64 -d -
